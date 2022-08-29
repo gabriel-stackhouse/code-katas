@@ -2,7 +2,7 @@
 
 Integer to Roman Numeral problem found on Leetcode
 
-# Prompt
+## Prompt
 
 Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.
 
@@ -30,7 +30,7 @@ is used:
 
 Given an integer, convert it to a roman numeral.
 
-# Examples
+## Examples
 
 **Input:** num = 3 | **Output:** "III"
 
