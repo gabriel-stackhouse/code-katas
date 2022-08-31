@@ -6,8 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -24,6 +23,131 @@ public class BowlingGameTest {
     public void roll_ThrowsExceptionWhenGameIsAlreadyFinished() {
         bowlingGame.setGameComplete(true);
         bowlingGame.roll(4);
+    }
+
+    @Test
+    public void roll_AddsRollToFrame() {
+        bowlingGame.roll(4);
+        assertEquals(4, bowlingGame.getFrames()[0].getFirstRoll().intValue());
+    }
+
+    @Test
+    public void roll_AddsRollToFrame_OtherParameters() {
+        bowlingGame.roll(2);
+        bowlingGame.roll(3);
+        assertEquals(2, bowlingGame.getFrames()[0].getFirstRoll().intValue());
+        assertEquals(3, bowlingGame.getFrames()[0].getSecondRoll().intValue());
+    }
+
+    @Test
+    public void roll_AddsRollToNextFrame() {
+        bowlingGame.roll(4);
+        bowlingGame.roll(3);
+        bowlingGame.roll(7);
+        assertEquals(4, bowlingGame.getFrames()[0].getFirstRoll().intValue());
+        assertEquals(3, bowlingGame.getFrames()[0].getSecondRoll().intValue());
+        assertEquals(7, bowlingGame.getFrames()[1].getFirstRoll().intValue());
+    }
+
+    @Test
+    public void roll_AddsRollToNextFrameWhenThereWasAStrike() {
+        bowlingGame.roll(4);
+        bowlingGame.roll(3);
+        bowlingGame.roll(10);
+        bowlingGame.roll(6);
+        assertEquals(4, bowlingGame.getFrames()[0].getFirstRoll().intValue());
+        assertEquals(3, bowlingGame.getFrames()[0].getSecondRoll().intValue());
+        assertEquals(10, bowlingGame.getFrames()[1].getFirstRoll().intValue());
+        assertNull(bowlingGame.getFrames()[2].getSecondRoll());
+        assertEquals(6, bowlingGame.getFrames()[2].getFirstRoll().intValue());
+    }
+
+    @Test
+    public void roll_AppliesFrameBonusForNextTwoRollsWhenThereWasAStrike() {
+        bowlingGame.roll(10);
+        bowlingGame.roll(6);
+        bowlingGame.roll(2);
+        bowlingGame.roll(5);
+        assertEquals(8, bowlingGame.getFrames()[0].getFrameBonus());
+    }
+
+    @Test
+    public void roll_AppliesFrameBonusForNextTwoRollsWhenThereWasAStrike_OtherParameters() {
+        bowlingGame.roll(2);
+        bowlingGame.roll(3);
+        bowlingGame.roll(1);
+        bowlingGame.roll(2);
+        bowlingGame.roll(10);
+        bowlingGame.roll(10);
+        bowlingGame.roll(4);
+        bowlingGame.roll(8);
+        assertEquals(14, bowlingGame.getFrames()[2].getFrameBonus());
+    }
+
+    @Test
+    public void roll_DoesNotApplyFrameBonusWhenThereWasAStrikeWhenLastFrame() {
+        for (int i = 0; i < 18; i++) {
+            bowlingGame.roll(4);
+        }
+        bowlingGame.roll(10);
+        bowlingGame.roll(4);
+        bowlingGame.roll(6);
+        assertEquals(0, bowlingGame.getFrames()[9].getFrameBonus());
+    }
+
+    @Test
+    public void roll_AppliesFrameBonusForNextRollWhenThereWasASpare() {
+        bowlingGame.roll(8);
+        bowlingGame.roll(2);
+        bowlingGame.roll(3);
+        bowlingGame.roll(4);
+        assertEquals(3, bowlingGame.getFrames()[0].getFrameBonus());
+    }
+
+    @Test
+    public void roll_AppliesFrameBonusForNextRollWhenThereWasASpare_OtherParameters() {
+        bowlingGame.roll(2);
+        bowlingGame.roll(3);
+        bowlingGame.roll(1);
+        bowlingGame.roll(2);
+        bowlingGame.roll(7);
+        bowlingGame.roll(3);
+        bowlingGame.roll(9);
+        bowlingGame.roll(8);
+        assertEquals(9, bowlingGame.getFrames()[2].getFrameBonus());
+    }
+
+    @Test
+    public void roll_DoesNotApplyFrameBonusWhenThereWasASpareWhenLastFrame() {
+        for (int i = 0; i < 18; i++) {
+            bowlingGame.roll(4);
+        }
+        bowlingGame.roll(4);
+        bowlingGame.roll(6);
+        bowlingGame.roll(3);
+        assertEquals(0, bowlingGame.getFrames()[9].getFrameBonus());
+    }
+
+    @Test
+    public void roll_MarksGameAsCompleteWhenTenthFrameIsComplete() {
+        for (int i = 0; i < 19; i++) {
+            bowlingGame.roll(4);
+        }
+        assertFalse(bowlingGame.isGameComplete());
+        bowlingGame.roll(4);
+        assertTrue(bowlingGame.isGameComplete());
+    }
+
+    @Test
+    public void roll_MarksGameAsCompleteWhenTenthFrameIsComplete_WithThreeFinalRolls() {
+        for (int i = 0; i < 19; i++) {
+            bowlingGame.roll(4);
+        }
+        assertFalse(bowlingGame.isGameComplete());
+        bowlingGame.roll(6);
+        assertFalse(bowlingGame.isGameComplete());
+        bowlingGame.roll(7);
+        assertTrue(bowlingGame.isGameComplete());
     }
 
     @Test

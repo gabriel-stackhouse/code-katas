@@ -26,7 +26,6 @@ public class BowlingGame {
         oneRollBonusFrames = new ArrayList<>();
     }
 
-    // todo - test
     public void roll(int pins) {
         if (isGameComplete) {
             throw new BowlingGameAlreadyFinishedException();
