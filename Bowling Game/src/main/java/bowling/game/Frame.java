@@ -8,14 +8,21 @@ import static java.util.stream.Stream.of;
 
 public class Frame {
 
-    private final int frameNumber;
-
+    private int frameNumber;
     private Integer firstRoll;
     private Integer secondRoll;
     private Integer thirdRoll;
     private int frameBonus;
 
     public Frame(int frameNumber) {
+        this.frameNumber = frameNumber;
+    }
+
+    public int getFrameNumber() {
+        return frameNumber;
+    }
+
+    public void setFrameNumber(int frameNumber) {
         this.frameNumber = frameNumber;
     }
 

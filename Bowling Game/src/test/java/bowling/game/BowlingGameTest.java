@@ -1,10 +1,16 @@
 package bowling.game;
 
+import bowling.game.exception.BowlingGameAlreadyFinishedException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BowlingGameTest {
 
     private BowlingGame bowlingGame;
@@ -14,65 +20,82 @@ public class BowlingGameTest {
         bowlingGame = new BowlingGame();
     }
 
-    // todo - add more unit tests
-
-    @Test
-    public void roll_ReturnsScoreOf300WhenAPerfectGameIsRolled() {
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        bowlingGame.roll(10);
-        assertTrue(bowlingGame.isGameComplete());
-        assertEquals(300, bowlingGame.score());
+    @Test(expected = BowlingGameAlreadyFinishedException.class)
+    public void roll_ThrowsExceptionWhenGameIsAlreadyFinished() {
+        bowlingGame.setGameComplete(true);
+        bowlingGame.roll(4);
     }
 
-    // todo - fix
-//    @Test
-//    public void score_ReturnsTheSumOfAllTheFrameScores() {
-//        bowlingGame.getFrames()[0] = buildFrame(7);
-//        bowlingGame.getFrames()[1] = buildFrame(6);
-//        bowlingGame.getFrames()[2] = buildFrame(12);
-//        bowlingGame.getFrames()[3] = buildFrame(2);
-//        bowlingGame.getFrames()[4] = buildFrame(8);
-//        bowlingGame.getFrames()[5] = buildFrame(10);
-//        assertEquals(45, bowlingGame.score());
-//    }
-//
-//    @Test
-//    public void score_ReturnsTheSumOfAllTheFrameScores_OtherParameters() {
-//        bowlingGame.getFrames()[0] = buildFrame(9);
-//        bowlingGame.getFrames()[1] = buildFrame(8);
-//        bowlingGame.getFrames()[2] = buildFrame(12);
-//        bowlingGame.getFrames()[3] = buildFrame(15);
-//        bowlingGame.getFrames()[4] = buildFrame(3);
-//        bowlingGame.getFrames()[5] = buildFrame(7);
-//        bowlingGame.getFrames()[6] = buildFrame(6);
-//        bowlingGame.getFrames()[7] = buildFrame(9);
-//        bowlingGame.getFrames()[8] = buildFrame(10);
-//        bowlingGame.getFrames()[9] = buildFrame(10);
-//        assertEquals(89, bowlingGame.score());
-//    }
+    @Test
+    public void score_CallsFrameCalculateFrameScoreMethod() {
+        bowlingGame.getFrames()[0] = buildMockFrame(7);
+        bowlingGame.getFrames()[1] = buildMockFrame(6);
+        bowlingGame.getFrames()[2] = buildMockFrame(12);
+        bowlingGame.score();
+        verify(bowlingGame.getFrames()[0]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[1]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[2]).calculateFrameScore();
+    }
+
+    @Test
+    public void score_CallsFrameCalculateFrameScoreMethod_OtherParameters() {
+        bowlingGame.getFrames()[0] = buildMockFrame(1);
+        bowlingGame.getFrames()[1] = buildMockFrame(1);
+        bowlingGame.getFrames()[2] = buildMockFrame(1);
+        bowlingGame.getFrames()[3] = buildMockFrame(1);
+        bowlingGame.getFrames()[4] = buildMockFrame(1);
+        bowlingGame.getFrames()[5] = buildMockFrame(1);
+        bowlingGame.getFrames()[6] = buildMockFrame(1);
+        bowlingGame.getFrames()[7] = buildMockFrame(1);
+        bowlingGame.getFrames()[8] = buildMockFrame(1);
+        bowlingGame.getFrames()[9] = buildMockFrame(1);
+        bowlingGame.score();
+        verify(bowlingGame.getFrames()[0]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[1]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[2]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[3]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[4]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[5]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[6]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[7]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[8]).calculateFrameScore();
+        verify(bowlingGame.getFrames()[9]).calculateFrameScore();
+    }
+
+    @Test
+    public void score_ReturnsTheSumOfAllTheFrameScores() {
+        bowlingGame.getFrames()[0] = buildMockFrame(7);
+        bowlingGame.getFrames()[1] = buildMockFrame(6);
+        bowlingGame.getFrames()[2] = buildMockFrame(12);
+        bowlingGame.getFrames()[3] = buildMockFrame(2);
+        bowlingGame.getFrames()[4] = buildMockFrame(8);
+        bowlingGame.getFrames()[5] = buildMockFrame(10);
+        assertEquals(45, bowlingGame.score());
+    }
+
+    @Test
+    public void score_ReturnsTheSumOfAllTheFrameScores_OtherParameters() {
+        bowlingGame.getFrames()[0] = buildMockFrame(9);
+        bowlingGame.getFrames()[1] = buildMockFrame(8);
+        bowlingGame.getFrames()[2] = buildMockFrame(12);
+        bowlingGame.getFrames()[3] = buildMockFrame(15);
+        bowlingGame.getFrames()[4] = buildMockFrame(3);
+        bowlingGame.getFrames()[5] = buildMockFrame(7);
+        bowlingGame.getFrames()[6] = buildMockFrame(6);
+        bowlingGame.getFrames()[7] = buildMockFrame(9);
+        bowlingGame.getFrames()[8] = buildMockFrame(10);
+        bowlingGame.getFrames()[9] = buildMockFrame(10);
+        assertEquals(89, bowlingGame.score());
+    }
 
     @Test
     public void score_ReturnsZeroWhenNoRollsHaveBeenPerformed() {
         assertEquals(0, bowlingGame.score());
     }
 
-    private Frame buildFrame(int frameNumber, Integer firstRoll, Integer secondRoll, Integer thirdRoll,
-                             Integer frameBonus) {
-        Frame frame = new Frame(frameNumber);
-        frame.setFirstRoll(firstRoll);
-        frame.setSecondRoll(secondRoll);
-        frame.setThirdRoll(thirdRoll);
-        frame.setFrameBonus(frameBonus);
-        return frame;
+    private Frame buildMockFrame(int frameScore) {
+        Frame mockFrame = mock(Frame.class);
+        when(mockFrame.calculateFrameScore()).thenReturn(frameScore);
+        return mockFrame;
     }
 }
