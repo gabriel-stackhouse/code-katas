@@ -72,10 +72,9 @@ public class Frame {
         return numberOfRollsFinished() == tenthFrameRolls;
     }
 
-    // todo - test
     public int calculateFrameScore() {
         return of(firstRoll, secondRoll, thirdRoll, frameBonus)
-                .filter(Objects::nonNull)   // todo - do I need this line?
+                .filter(Objects::nonNull)
                 .mapToInt(Integer::intValue)
                 .sum();
     }
@@ -99,7 +98,6 @@ public class Frame {
         return firstRoll != null && firstRoll == 10;
     }
 
-    // todo - test
     public boolean isSpare() {
         return firstRoll != null && secondRoll != null && firstRoll + secondRoll == 10;
     }

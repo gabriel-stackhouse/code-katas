@@ -26,30 +26,6 @@ public class BowlingGame {
         oneRollBonusFrames = new ArrayList<>();
     }
 
-    public Frame[] getFrames() {
-        return frames;
-    }
-
-    public void setFrames(Frame[] frames) {
-        this.frames = frames;
-    }
-
-    public int getFrameNumber() {
-        return frameNumber;
-    }
-
-    public void setFrameNumber(int frameNumber) {
-        this.frameNumber = frameNumber;
-    }
-
-    public boolean isGameComplete() {
-        return isGameComplete;
-    }
-
-    public void setGameComplete(boolean gameComplete) {
-        isGameComplete = gameComplete;
-    }
-
     // todo - test
     public void roll(int pins) {
         if (isGameComplete) {
@@ -73,6 +49,30 @@ public class BowlingGame {
                 .filter(Objects::nonNull)
                 .mapToInt(Frame::calculateFrameScore)
                 .sum();
+    }
+
+    public int getFrameNumber() {
+        return frameNumber;
+    }
+
+    public void setFrameNumber(int frameNumber) {
+        this.frameNumber = frameNumber;
+    }
+
+    public Frame[] getFrames() {
+        return frames;
+    }
+
+    public void setFrames(Frame[] frames) {
+        this.frames = frames;
+    }
+
+    public boolean isGameComplete() {
+        return isGameComplete;
+    }
+
+    public void setGameComplete(boolean gameComplete) {
+        isGameComplete = gameComplete;
     }
 
     private void addFrameBonuses(int pins) {

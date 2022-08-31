@@ -47,7 +47,7 @@ public class BowlingGameTest {
 //    }
 //
 //    @Test
-//    public void score_ReturnsTheSumOfAllTheFrameScores_AltParams() {
+//    public void score_ReturnsTheSumOfAllTheFrameScores_OtherParameters() {
 //        bowlingGame.getFrames()[0] = buildFrame(9);
 //        bowlingGame.getFrames()[1] = buildFrame(8);
 //        bowlingGame.getFrames()[2] = buildFrame(12);

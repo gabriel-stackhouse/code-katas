@@ -4,10 +4,13 @@ import bowling.game.exception.FrameAlreadyFinishedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.*;
 
-//@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class FrameTest {
 
     private Frame frame;
@@ -61,12 +64,13 @@ public class FrameTest {
         assertFrameRolls(tenthFrame, 10, 4, 3);
     }
 
-    // todo - use a mock for this to have isFrameFinished() return false
-//    @Test(expected = FrameAlreadyFinishedException.class)
-//    public void addRoll_ThrowsExceptionWhenFrameIsFinished() {
-//        frame.setFrameFinished(true);
-//        frame.addRoll(5);
-//    }
+    @Test(expected = FrameAlreadyFinishedException.class)
+    public void addRoll_ThrowsExceptionWhenFrameIsFinished() {
+        Frame mockFrame = mock(Frame.class);
+        when(mockFrame.isFrameFinished()).thenReturn(true);
+        doCallRealMethod().when(mockFrame).addRoll(anyInt());
+        mockFrame.addRoll(5);
+    }
 
     @Test
     public void isFrameFinished_ReturnsTrueWhenStrikeIsRolled() {
@@ -81,7 +85,7 @@ public class FrameTest {
     }
 
     @Test
-    public void isFrameFinished_ReturnsFalseWhenFirstRollIsNotAStrike_AltParams() {
+    public void isFrameFinished_ReturnsFalseWhenFirstRollIsNotAStrike_OtherParameters() {
         frame.setFirstRoll(7);
         assertFalse(frame.isFrameFinished());
     }
@@ -94,7 +98,7 @@ public class FrameTest {
     }
 
     @Test
-    public void isFrameFinished_ReturnsTrueWhenTwoRollsAreCompleted_AltParams() {
+    public void isFrameFinished_ReturnsTrueWhenTwoRollsAreCompleted_OtherParameters() {
         frame.setFirstRoll(2);
         frame.setSecondRoll(3);
         assertTrue(frame.isFrameFinished());
@@ -114,7 +118,7 @@ public class FrameTest {
     }
 
     @Test
-    public void isFrameFinished_ReturnsFalseWhenTenthFrameAndTwoRollsAreCompletedWithStrikeOnFirstRoll_AltParams() {
+    public void isFrameFinished_ReturnsFalseWhenTenthFrameAndTwoRollsAreCompletedWithStrikeOnFirstRoll_OtherParameters() {
         tenthFrame.setFirstRoll(10);
         tenthFrame.setSecondRoll(10);
         assertFalse(tenthFrame.isFrameFinished());
@@ -128,7 +132,7 @@ public class FrameTest {
     }
 
     @Test
-    public void isFrameFinished_ReturnsFalseWhenTenthFrameAndTwoRollsAreCompletedWithASpare_AltParams() {
+    public void isFrameFinished_ReturnsFalseWhenTenthFrameAndTwoRollsAreCompletedWithASpare_OtherParameters() {
         tenthFrame.setFirstRoll(8);
         tenthFrame.setSecondRoll(2);
         assertFalse(tenthFrame.isFrameFinished());
@@ -143,7 +147,7 @@ public class FrameTest {
     }
 
     @Test
-    public void isFrameFinished_ReturnsTrueWhenTenthFrameAndThreeRollsAreCompleted_AltParams() {
+    public void isFrameFinished_ReturnsTrueWhenTenthFrameAndThreeRollsAreCompleted_OtherParameters() {
         tenthFrame.setFirstRoll(7);
         tenthFrame.setSecondRoll(3);
         tenthFrame.setThirdRoll(10);
@@ -158,10 +162,34 @@ public class FrameTest {
     }
 
     @Test
-    public void isFrameFinished_ReturnsTrueWhenTenthFrameAndTwoRollsAreCompletedWithNoStrikeOrSpare_AltParams() {
+    public void isFrameFinished_ReturnsTrueWhenTenthFrameAndTwoRollsAreCompletedWithNoStrikeOrSpare_OtherParameters() {
         tenthFrame.setFirstRoll(8);
         tenthFrame.setSecondRoll(1);
         assertTrue(tenthFrame.isFrameFinished());
+    }
+
+    @Test
+    public void calculateFrameScore_ReturnsSumOfAllRolesAndFrameBonus() {
+        Frame newFrame = buildFrame(6, 4, 8, 2);
+        assertEquals(20, newFrame.calculateFrameScore());
+    }
+
+    @Test
+    public void calculateFrameScore_ReturnsSumOfAllRolesAndFrameBonus_OtherParameters() {
+        Frame newFrame = buildFrame(7, 3, 4, 1);
+        assertEquals(15, newFrame.calculateFrameScore());
+    }
+
+    @Test
+    public void calculateFrameScore_ReturnsSumOfAllRolesAndFrameBonusIgnoringNullValues() {
+        Frame newFrame = buildFrame(6, 2, null, 3);
+        assertEquals(11, newFrame.calculateFrameScore());
+    }
+
+    @Test
+    public void calculateFrameScore_ReturnsSumOfAllRolesAndFrameBonusIgnoringNullValues_OtherParameters() {
+        Frame newFrame = buildFrame(4, null, null, 0);
+        assertEquals(4, newFrame.calculateFrameScore());
     }
 
     @Test
@@ -197,7 +225,7 @@ public class FrameTest {
     }
 
     @Test
-    public void addFrameBonus_BonusIsAddedToFrameBonus_AltParams() {
+    public void addFrameBonus_BonusIsAddedToFrameBonus_OtherParameters() {
         frame.setFrameBonus(10);
         frame.addFrameBonus(6);
         assertEquals(16, frame.getFrameBonus());
@@ -216,14 +244,62 @@ public class FrameTest {
     }
 
     @Test
-    public void isStrike_ReturnsFalseWhenFirstRollIsLessThanTen_AltParams() {
+    public void isStrike_ReturnsFalseWhenFirstRollIsLessThanTen_OtherParameters() {
         frame.setFirstRoll(4);
         assertFalse(frame.isStrike());
     }
 
     @Test
+    public void isSpare_ReturnsTrueWhenFirstAndSecondRollAddToTen() {
+        frame.setFirstRoll(9);
+        frame.setSecondRoll(1);
+        assertTrue(frame.isSpare());
+    }
+
+    @Test
+    public void isSpare_ReturnsTrueWhenFirstAndSecondRollAddToTen_OtherParameters() {
+        frame.setFirstRoll(6);
+        frame.setSecondRoll(4);
+        assertTrue(frame.isSpare());
+    }
+
+    @Test
+    public void isSpare_ReturnsFalseWhenFirstAndSecondRollAddToLessThanTen() {
+        frame.setFirstRoll(8);
+        frame.setSecondRoll(1);
+        assertFalse(frame.isSpare());
+    }
+
+    @Test
+    public void isSpare_ReturnsFalseWhenFirstAndSecondRollAddToLessThanTen_OtherParameters() {
+        frame.setFirstRoll(4);
+        frame.setSecondRoll(2);
+        assertFalse(frame.isSpare());
+    }
+
+    @Test
+    public void isSpare_ReturnsFalseWhenFirstRollHasNotBeenCompleted() {
+        assertFalse(frame.isSpare());
+    }
+
+    @Test
+    public void isSpare_ReturnsFalseWhenSecondRollHasNotBeenCompleted() {
+        frame.setFirstRoll(4);
+        assertFalse(frame.isSpare());
+    }
+
+    @Test
     public void isStrike_ReturnsFalseWhenFirstRollHasNotBeenCompleted() {
         assertFalse(frame.isStrike());
+    }
+
+    private Frame buildFrame(Integer firstRoll, Integer secondRoll, Integer thirdRoll, int frameBonus) {
+        Frame frame = new Frame(1);
+        frame.setFirstRoll(firstRoll);
+        frame.setSecondRoll(secondRoll);
+        frame.setThirdRoll(thirdRoll);
+        frame.setFrameBonus(frameBonus);
+        return frame;
     }
 
     public void assertFrameRolls(Frame frame, Integer firstRoll, Integer secondRoll, Integer thirdRoll) {
