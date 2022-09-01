@@ -1,10 +1,10 @@
 # Bowling Game
 
-Implement a bowling game programatically.  Kata originally found [here](https://kata-log.rocks/bowling-game-kata).
+Implement a bowling game programatically.  Credit for the kata is found [here](https://kata-log.rocks/bowling-game-kata).
 
 ## Prompt
 
-Write a class Game that has two methods:
+Write a class BowlingGame that has two methods:
 
 `void roll(int)` is called each time the player rolls a ball. The argument is the number of pins knocked down.
 
