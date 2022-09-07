@@ -5,10 +5,10 @@ import bowling.game.exception.BowlingGameAlreadyFinishedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Stream.concat;
+import static java.util.stream.Stream.of;
 
 public class BowlingGame {
 
@@ -33,9 +33,7 @@ public class BowlingGame {
         Frame currentFrame = frames[frameNumber - 1];
         currentFrame.addRoll(pins);
         addFrameBonuses(pins);
-        if (currentFrame.isFrameFinished() && frameNumber < 10) {
-            checkForFutureFrameBonuses(currentFrame);
-        }
+        checkForFutureFrameBonuses(currentFrame);
         isGameComplete = frameNumber == 10 && currentFrame.isFrameFinished();
         if (currentFrame.isFrameFinished() && !isGameComplete) {
             frameNumber++;
@@ -75,7 +73,7 @@ public class BowlingGame {
     }
 
     private void addFrameBonuses(int pins) {
-        concat(oneRollBonusFrames.stream(), Stream.of(twoRollBonusFrame))
+        concat(oneRollBonusFrames.stream(), of(twoRollBonusFrame))
                 .filter(Objects::nonNull)
                 .forEach(frame -> frame.addFrameBonus(pins));
         oneRollBonusFrames.clear();
@@ -84,6 +82,9 @@ public class BowlingGame {
     }
 
     private void checkForFutureFrameBonuses(Frame currentFrame) {
+        if (!currentFrame.isFrameFinished() || frameNumber == 10) {
+            return;
+        }
         if (currentFrame.isStrike()) {
             twoRollBonusFrame = currentFrame;
         } else if (currentFrame.isSpare()) {
